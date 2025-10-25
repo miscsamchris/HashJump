@@ -1,7 +1,7 @@
 # 🎮 HashJump
 
 <div align="center">
-  <img src="public/game.png" alt="HashJump Logo" width="200"/>
+  <img src="docs/Logo.png" alt="HashJump Logo" width="200"/>
   
   **The Future of Hyper-Casual Gaming on Blockchain**
   
