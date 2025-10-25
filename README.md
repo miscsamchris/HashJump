@@ -333,15 +333,9 @@ If you encounter contract size limits (>24,576 bytes):
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
 ## 🙏 Acknowledgments
 
-- **Hedera Hashgraph** - For blockchain infrastructure
+- **Hedera** - For blockchain infrastructure
 - **Kaboom.js** - For the game engine
 - **OpenAI** - For AI-powered level generation
 - **shadcn/ui** - For beautiful UI components
@@ -349,34 +343,22 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 📞 Contact & Support
-
-- **Website**: [hashjump.io](https://hashjump.io)
-- **Twitter**: [@HashJump](https://twitter.com/hashjump)
-- **Discord**: [Join our community](https://discord.gg/hashjump)
-- **Email**: support@hashjump.io
-
----
-
 ## 🎨 Screenshots
 
 ### Homepage
-![Homepage](docs/screenshots/homepage.png)
+![Homepage](docs/screenshots/Homepage.png)
 
 ### Game Creator
-![Game Creator](docs/screenshots/creator.png)
+![Game Creator](docs/screenshots/Creator.png)
 
 ### Gameplay
-![Gameplay](docs/screenshots/gameplay.png)
+![Gameplay](docs/screenshots/Gameplay.png)
+
+### Gamers
+![Gamer](docs/screenshots/Game-View.png)
 
 ---
 
 <div align="center">
   <p>Built with ❤️ by the HashJump Team</p>
-  <p>
-    <a href="https://hashjump.io">Website</a> •
-    <a href="https://docs.hashjump.io">Documentation</a> •
-    <a href="https://discord.gg/hashjump">Discord</a> •
-    <a href="https://twitter.com/hashjump">Twitter</a>
-  </p>
 </div>
