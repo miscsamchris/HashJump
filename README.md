@@ -321,16 +321,71 @@ If you encounter contract size limits (>24,576 bytes):
 
 ---
 
-## 📊 Performance Metrics
+## 📊 Hedera Smart Contract
 
-### Contract Optimization Results
+[Game Factory Smart Contract](https://hashscan.io/testnet/contract/0.0.7130167)
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Contract Size | 34,373 bytes | 18,000 bytes | **47% reduction** |
-| Deployment Gas | ~8M gas | ~4.8M gas | **40% savings** |
-| Function Calls | Standard | Optimized | **20-30% less gas** |
 
+#### **GameFactoryMinimal**
+Factory contract for creating and managing game instances across the platform.
+
+**Purpose:**
+- Deploys individual Game contracts
+- Tracks all games by ID and owner
+- Provides game discovery and verification
+- Manages platform-wide statistics
+
+**Key Functions:**
+- `createGame()` - Deploy new game with custom parameters
+- `createGameWithLevels()` - Deploy game with pre-loaded level data
+- `getGameInfo()` - Retrieve comprehensive game metadata
+- `getGamesByOwner()` - Query games by creator address
+- `verifyGame()` - Confirm contract authenticity
+
+**Optimization:**
+- Size: ~18,000 bytes (47% smaller than original)
+- Gas-optimized with immutable constants
+- Uses library pattern to reduce bytecode duplication
+
+---
+
+#### **Game Contracts**
+Individual smart contracts for each game, managing state and economics.
+
+**Purpose:**
+- Store game levels and configuration
+- Handle player entry fees in HBAR
+- Manage prize pool accumulation
+- Distribute rewards automatically
+- Track player statistics
+
+**Key Functions:**
+- `playGame()` - Process player entry and payment
+- `awardPrize()` - Distribute winnings to victorious players
+- `addLevel()` - Add new level data to the game
+- `getPaymentInfo()` - View prize pool and player count
+- `updateCostOfPlay()` - Creator can adjust entry fee
+
+
+#### **GameMath Library**
+Shared calculation library for consistent revenue splits.
+
+**Purpose:**
+- Reusable revenue calculation functions
+- Ensures consistent math across all contracts
+- Reduces bytecode duplication
+- Gas-efficient operations
+
+**Functions:**
+- `getRevenueBreakdown()` - Calculate 50/20/20/10 split
+- `calculatePoolShare()` - Compute prize pool portion
+- `calculateCreatorShare()` - Compute creator earnings
+- `calculatePlatformShare()` - Compute platform fees
+
+**Benefits:**
+- Single source of truth for economics
+- Easy to audit and verify
+- Reduces deployment costs
 ---
 
 ## 🙏 Acknowledgments
