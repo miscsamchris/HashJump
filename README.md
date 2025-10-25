@@ -133,7 +133,7 @@ HashJump is a revolutionary blockchain-based gaming platform where users can cre
 ---
 
 ## 🏗️ Project Structure
-```
+```bash
 HashJump/
 ├── src/
 │   ├── app/
