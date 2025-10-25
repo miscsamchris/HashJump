@@ -410,7 +410,7 @@ Shared calculation library for consistent revenue splits.
 ![Gameplay](docs/screenshots/Gameplay.png)
 
 ### Gamers
-![Gamer](docs/screenshots/Game-View.png)
+![Gamer](docs/screenshots/Gamer-View.png)
 
 ---
 
