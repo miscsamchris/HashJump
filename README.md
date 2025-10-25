@@ -269,38 +269,8 @@ Edit level data in `public/data/levels.json` or use the visual editor.
 - [ ] Tournament system
 - [ ] Mobile app
 - [ ] Cross-chain support
-- [ ] DAO governance
 
 ---
-
-## 🤝 Contributing
-
-We welcome contributions! Please follow these steps:
-
-1. **Fork the repository**
-2. **Create a feature branch**
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-3. **Commit your changes**
-   ```bash
-   git commit -m 'Add amazing feature'
-   ```
-4. **Push to the branch**
-   ```bash
-   git push origin feature/amazing-feature
-   ```
-5. **Open a Pull Request**
-
-### Development Guidelines
-
-- Follow TypeScript best practices
-- Write clean, commented code
-- Test thoroughly before submitting
-- Update documentation as needed
-
----
-
 ## 🐛 Known Issues & Solutions
 
 ### Contract Size Issues
