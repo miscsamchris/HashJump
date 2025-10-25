@@ -1,0 +1,204 @@
+import { ethers } from 'ethers';
+
+let provider: ethers.BrowserProvider | null = null;
+let signer: ethers.JsonRpcSigner | null = null;
+
+// Define Hedera testnet network parameters
+const hederaTestnet = {
+    chainId: '0x128', // 296 in hex
+    chainName: 'Hedera Testnet',
+    nativeCurrency: {
+        name: 'Hedera',
+        symbol: 'HBAR',
+        decimals: 18
+    },
+    rpcUrls: ['https://testnet.hashio.io/api'],
+    blockExplorerUrls: [
+        'https://hashscan.io/testnet'
+    ]
+};
+
+// Format balance for display
+const formatBalance = (balance: string) => {
+    const balanceInEther = ethers.formatEther(balance);
+    const numBalance = parseFloat(balanceInEther);
+    
+    if (numBalance === 0) return "0";
+    if (numBalance < 0.001) return "< 0.001";
+    if (numBalance < 1) return numBalance.toFixed(3);
+    if (numBalance < 1000) return numBalance.toFixed(2);
+    
+    return numBalance.toFixed(1);
+};
+
+// Connect to MetaMask and configure HBAR Testnet
+export const connectToMetamask = async () => {
+    if (!window.ethereum) {
+        throw new Error('MetaMask is not installed');
+    }
+
+    provider = new ethers.BrowserProvider(window.ethereum);
+
+    try {
+        // Try to switch to Hedera testnet
+        await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: hederaTestnet.chainId }],
+        });
+    } catch (switchError: any) {
+        // This error code indicates that the chain has not been added to MetaMask
+        if (switchError.code === 4902) {
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_addEthereumChain',
+                    params: [hederaTestnet],
+                });
+            } catch (addError) {
+                throw new Error('Failed to add Hedera testnet to MetaMask');
+            }
+        } else {
+            throw new Error('Failed to switch to Hedera testnet');
+        }
+    }
+
+    const [accounts, chainId] = await Promise.all([
+        provider.send('eth_requestAccounts', []),
+        provider.send('eth_chainId', []),
+    ]);
+    
+    // Verify we're on the correct network
+    if (chainId.toLowerCase() !== hederaTestnet.chainId.toLowerCase()) {
+        throw new Error('Please switch to Hedera testnet network');
+    }
+
+    signer = await provider.getSigner();
+    console.log("accounts", accounts, "chainId", chainId);
+    return { signer, chain: chainId, accounts: accounts };
+};
+
+// Get wallet balance
+const getWalletBalance = async (address: string) => {
+    if (!provider) return "0";
+    
+    try {
+        const balance = await provider.getBalance(address);
+        return formatBalance(balance.toString());
+    } catch (error) {
+        console.error("Error fetching balance:", error);
+        return "0";
+    }
+};
+
+// Get wallet information and connect
+export const getWalletInformation = async () => {
+    try {
+        const { signer: newSigner, chain, accounts } = await connectToMetamask();
+
+        if (!accounts || accounts.length === 0) {
+            throw new Error('No account found');
+        }
+        if (!chain) {
+            throw new Error('No chain found');
+        }
+
+        signer = newSigner;
+        
+        // Get wallet balance
+        const balance = await getWalletBalance(accounts[0]);
+        
+        return {
+            address: accounts[0],
+            network: 'Hedera Testnet',
+            chainId: chain,
+            balance: balance,
+            signer: newSigner
+        };
+        
+    } catch (error) {
+        console.error("Wallet connection error:", error);
+        throw error;
+    }
+};
+
+// Check if wallet is already connected
+export const checkWalletConnection = async () => {
+    if (!window.ethereum) {
+        return null;
+    }
+
+    try {
+        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        if (accounts.length > 0) {
+            provider = new ethers.BrowserProvider(window.ethereum);
+            signer = await provider.getSigner();
+            const chainId = await provider.send('eth_chainId', []);
+            
+            // Get wallet balance
+            const balance = await getWalletBalance(accounts[0]);
+            
+            return {
+                address: accounts[0],
+                network: chainId === hederaTestnet.chainId ? 'Hedera Testnet' : 'Unknown Network',
+                chainId: chainId,
+                balance: balance,
+                signer: signer
+            };
+        }
+    } catch (error) {
+        console.error("Error checking wallet connection:", error);
+    }
+    
+    return null;
+};
+
+// Refresh wallet balance
+export const refreshWalletBalance = async (address: string) => {
+    return await getWalletBalance(address);
+};
+
+// Disconnect wallet
+export const disconnectWallet = () => {
+    provider = null;
+    signer = null;
+};
+
+// Get current signer
+export const getSigner = () => signer;
+
+// Get current provider
+export const getProvider = () => provider;
+
+// Send payment to game contract
+export const sendPayment = async (toAddress: string, amount: string) => {
+    if (!signer) {
+        throw new Error('Wallet not connected. Please connect your wallet first.');
+    }
+
+    try {
+        // Convert amount from HBAR to wei (multiply by 10^18)
+        const amountInWei = ethers.parseEther(amount);
+        
+        // Create transaction
+        const transaction = {
+            to: toAddress,
+            value: amountInWei,
+        };
+
+        // Send transaction
+        const txResponse = await signer.sendTransaction(transaction);
+        console.log('Payment transaction sent:', txResponse.hash);
+        
+        // Wait for transaction confirmation
+        const receipt = await txResponse.wait();
+        console.log('Payment confirmed:', receipt);
+        
+        return {
+            success: true,
+            transactionHash: txResponse.hash,
+            receipt: receipt
+        };
+    } catch (error) {
+        console.error('Payment failed:', error);
+        throw error;
+    }
+}; 
