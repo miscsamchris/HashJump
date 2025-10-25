@@ -158,8 +158,7 @@ HashJump/
 │   ├── sprites/                    # Game assets
 │   └── data/
 │       └── levels.json            # Level templates
-└── package.jsonCONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+└── package.json
 ```
 ### GameFactoryMinimal
 
