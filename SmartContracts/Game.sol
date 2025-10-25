@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./GameMath.sol";
+
 contract Game {
     struct Levels {
         uint256 levelsCount;
@@ -18,11 +20,7 @@ contract Game {
     uint256 public prizePool;
     address public constant PLATFORM_ADDRESS = 0x9a382e06F97384d40A5cfB354485e343419afddf;
     
-    // Revenue split percentages (in basis points for precision)
-    uint256 public constant POOL_PERCENTAGE = 5000;     // 50%
-    uint256 public constant CREATOR_PERCENTAGE = 2000;  // 20%
-    uint256 public constant PLATFORM_PERCENTAGE = 2000; // 20%
-    uint256 public constant REMAINING_PERCENTAGE = 1000; // 10% (for rounding/future use)
+    // Revenue split percentages now handled by GameMath library
     
     // Player tracking
     mapping(address => uint256) public playerPayments;
@@ -69,10 +67,8 @@ contract Game {
     function _playGame() internal {
         require(msg.value == costOfPlay, "Incorrect payment amount");
         
-        // Calculate revenue splits
-        uint256 poolShare = (msg.value * POOL_PERCENTAGE) / 10000;
-        uint256 creatorShare = (msg.value * CREATOR_PERCENTAGE) / 10000;
-        uint256 platformShare = (msg.value * PLATFORM_PERCENTAGE) / 10000;
+        // Calculate revenue splits using library
+        (uint256 poolShare, uint256 creatorShare, uint256 platformShare, ) = GameMath.getRevenueBreakdown(msg.value);
         
         // Update prize pool
         prizePool += poolShare;
@@ -162,12 +158,7 @@ contract Game {
         uint256 platformShare,
         uint256 remaining
     ) {
-        poolShare = (amount * POOL_PERCENTAGE) / 10000;
-        creatorShare = (amount * CREATOR_PERCENTAGE) / 10000;
-        platformShare = (amount * PLATFORM_PERCENTAGE) / 10000;
-        remaining = amount - poolShare - creatorShare - platformShare;
-        
-        return (poolShare, creatorShare, platformShare, remaining);
+        return GameMath.getRevenueBreakdown(amount);
     }
     
     // Update cost of play (only owner)

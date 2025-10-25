@@ -2,18 +2,75 @@ import { ethers } from 'ethers';
 import { getProvider, getSigner } from './wallet';
 
 // Smart contract address
-const GAME_FACTORY_ADDRESS = '0xf8Aa9B30d26aE9185D7739e31280f29368CDfCBA';
+const GAME_FACTORY_ADDRESS = '0x83BFde82bd350ad252054F9E88cD3fDADF95EF83';
 
-// ABI for the smart contract functions we need
+// ABI for the GameFactoryMinimal contract functions
 const GAME_FACTORY_ABI = [
   {
-    "inputs": [],
-    "name": "getAllGames",
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "gameId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getGame",
     "outputs": [
       {
-        "internalType": "address[]",
+        "internalType": "address",
         "name": "",
-        "type": "address[]"
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "getGamesByOwner",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getGameCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "gameAddress",
+        "type": "address"
+      }
+    ],
+    "name": "verifyGame",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -27,7 +84,7 @@ const GAME_FACTORY_ABI = [
         "type": "uint256"
       }
     ],
-    "name": "getCompleteGameInfo",
+    "name": "getGameInfo",
     "outputs": [
       {
         "internalType": "uint256",
@@ -77,6 +134,59 @@ const GAME_FACTORY_ABI = [
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "getRevenueBreakdown",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "poolShare",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "creatorShare",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "platformShare",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "remaining",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "gameId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getGameLevelsCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "gameId",
         "type": "uint256"
       },
@@ -100,6 +210,93 @@ const GAME_FACTORY_ABI = [
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "gameId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getGamePaymentInfo",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "costOfPlay",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "prizePool",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalPlayers",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "contractBalance",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "gameId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      }
+    ],
+    "name": "getGamePlayerInfo",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "hasPlayed",
+        "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalPaid",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "gameName",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "costOfPlay",
+        "type": "uint256"
+      }
+    ],
+    "name": "createGame",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "gameAddress",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "string",
         "name": "gameName",
         "type": "string"
@@ -115,7 +312,7 @@ const GAME_FACTORY_ABI = [
         "type": "uint256"
       }
     ],
-    "name": "createGameWithLevelsAndCost",
+    "name": "createGameWithLevels",
     "outputs": [
       {
         "internalType": "address",
@@ -145,7 +342,7 @@ export interface SmartContractGame {
   levels: GameLevel[];
 }
 
-// Get all games from the smart contract
+// Get all games from the smart contract (updated for GameFactoryMinimal)
 export const getAllGames = async (): Promise<string[]> => {
   try {
     console.log('Getting provider for getAllGames...');
@@ -158,9 +355,25 @@ export const getAllGames = async (): Promise<string[]> => {
     const contract = new ethers.Contract(GAME_FACTORY_ADDRESS, GAME_FACTORY_ABI, provider);
     console.log('Contract instance created:', GAME_FACTORY_ADDRESS);
     
-    const gameAddresses = await contract.getAllGames();
-    console.log('Retrieved game addresses:', gameAddresses);
+    // Get total game count first
+    const gameCount = await contract.getGameCount();
+    console.log('Total games:', gameCount.toString());
     
+    // Get all game addresses by iterating through game IDs
+    const gameAddresses: string[] = [];
+    for (let i = 1; i <= Number(gameCount); i++) {
+      try {
+        const gameAddress = await contract.getGame(i);
+        if (gameAddress && gameAddress !== '0x0000000000000000000000000000000000000000') {
+          gameAddresses.push(gameAddress);
+        }
+      } catch (error) {
+        console.warn(`Game ${i} not found or error fetching:`, error);
+        // Continue with other games
+      }
+    }
+    
+    console.log('Retrieved game addresses:', gameAddresses);
     return gameAddresses;
   } catch (error) {
     console.error('Error fetching games:', error);
@@ -225,7 +438,7 @@ export const getAllLevelsForGame = async (gameId: number, levelsCount: number): 
   }
 };
 
-// Get complete game information for a specific game ID
+// Get complete game information for a specific game ID (updated for GameFactoryMinimal)
 export const getCompleteGameInfo = async (gameId: number): Promise<SmartContractGame> => {
   try {
     console.log(`Fetching complete info for game ID: ${gameId}`);
@@ -238,7 +451,7 @@ export const getCompleteGameInfo = async (gameId: number): Promise<SmartContract
     const contract = new ethers.Contract(GAME_FACTORY_ADDRESS, GAME_FACTORY_ABI, provider);
     console.log('Contract instance created for game info');
     
-    const gameInfo = await contract.getCompleteGameInfo(gameId);
+    const gameInfo = await contract.getGameInfo(gameId);
     console.log('Raw game info received:', gameInfo);
     
     const levelsCount = Number(gameInfo.levelsCount);
@@ -396,7 +609,140 @@ export const getDifficultyColor = (difficulty: string): string => {
   return color;
 };
 
-// Create a new game with levels and cost
+// Get games by owner address
+export const getGamesByOwner = async (ownerAddress: string): Promise<number[]> => {
+  try {
+    console.log(`Getting games for owner: ${ownerAddress}`);
+    const provider = getProvider();
+    if (!provider) {
+      throw new Error('No provider available. Please connect your wallet.');
+    }
+
+    const contract = new ethers.Contract(GAME_FACTORY_ADDRESS, GAME_FACTORY_ABI, provider);
+    const gameIds = await contract.getGamesByOwner(ownerAddress);
+    
+    console.log('Games by owner:', gameIds);
+    return gameIds.map((id: any) => Number(id));
+  } catch (error) {
+    console.error('Error fetching games by owner:', error);
+    throw error;
+  }
+};
+
+// Verify if an address is a valid game
+export const verifyGame = async (gameAddress: string): Promise<boolean> => {
+  try {
+    console.log(`Verifying game address: ${gameAddress}`);
+    const provider = getProvider();
+    if (!provider) {
+      throw new Error('No provider available. Please connect your wallet.');
+    }
+
+    const contract = new ethers.Contract(GAME_FACTORY_ADDRESS, GAME_FACTORY_ABI, provider);
+    const isValid = await contract.verifyGame(gameAddress);
+    
+    console.log('Game verification result:', isValid);
+    return isValid;
+  } catch (error) {
+    console.error('Error verifying game:', error);
+    throw error;
+  }
+};
+
+// Get revenue breakdown for an amount
+export const getRevenueBreakdown = async (amount: string): Promise<{
+  poolShare: string;
+  creatorShare: string;
+  platformShare: string;
+  remaining: string;
+}> => {
+  try {
+    console.log(`Getting revenue breakdown for amount: ${amount}`);
+    const provider = getProvider();
+    if (!provider) {
+      throw new Error('No provider available. Please connect your wallet.');
+    }
+
+    const contract = new ethers.Contract(GAME_FACTORY_ADDRESS, GAME_FACTORY_ABI, provider);
+    const amountInWei = BigInt(amount);
+    const breakdown = await contract.getRevenueBreakdown(amountInWei);
+    
+    const result = {
+      poolShare: ethers.formatEther(breakdown.poolShare),
+      creatorShare: ethers.formatEther(breakdown.creatorShare),
+      platformShare: ethers.formatEther(breakdown.platformShare),
+      remaining: ethers.formatEther(breakdown.remaining)
+    };
+    
+    console.log('Revenue breakdown:', result);
+    return result;
+  } catch (error) {
+    console.error('Error getting revenue breakdown:', error);
+    throw error;
+  }
+};
+
+// Get game payment info
+export const getGamePaymentInfo = async (gameId: number): Promise<{
+  costOfPlay: string;
+  prizePool: string;
+  totalPlayers: number;
+  contractBalance: string;
+}> => {
+  try {
+    console.log(`Getting payment info for game ID: ${gameId}`);
+    const provider = getProvider();
+    if (!provider) {
+      throw new Error('No provider available. Please connect your wallet.');
+    }
+
+    const contract = new ethers.Contract(GAME_FACTORY_ADDRESS, GAME_FACTORY_ABI, provider);
+    const paymentInfo = await contract.getGamePaymentInfo(gameId);
+    
+    const result = {
+      costOfPlay: ethers.formatEther(paymentInfo.costOfPlay),
+      prizePool: ethers.formatEther(paymentInfo.prizePool),
+      totalPlayers: Number(paymentInfo.totalPlayers),
+      contractBalance: ethers.formatEther(paymentInfo.contractBalance)
+    };
+    
+    console.log('Game payment info:', result);
+    return result;
+  } catch (error) {
+    console.error('Error getting game payment info:', error);
+    throw error;
+  }
+};
+
+// Get player info for a specific game
+export const getGamePlayerInfo = async (gameId: number, playerAddress: string): Promise<{
+  hasPlayed: boolean;
+  totalPaid: string;
+}> => {
+  try {
+    console.log(`Getting player info for game ${gameId} and player ${playerAddress}`);
+    const provider = getProvider();
+    if (!provider) {
+      throw new Error('No provider available. Please connect your wallet.');
+    }
+
+    const contract = new ethers.Contract(GAME_FACTORY_ADDRESS, GAME_FACTORY_ABI, provider);
+    const playerInfo = await contract.getGamePlayerInfo(gameId, playerAddress);
+    
+    const result = {
+      hasPlayed: playerInfo.hasPlayed,
+      totalPaid: ethers.formatEther(playerInfo.totalPaid)
+    };
+    
+    console.log('Player info:', result);
+    return result;
+  } catch (error) {
+    console.error('Error getting player info:', error);
+    throw error;
+  }
+};
+
+// Create a new game with levels and cost (updated for GameFactoryMinimal)
 export const createGameWithLevelsAndCost = async (
   gameName: string,
   levels: string[][],
@@ -417,9 +763,9 @@ export const createGameWithLevelsAndCost = async (
     const costInWei = BigInt(costOfPlay);
     console.log('Cost in wei:', costInWei.toString());
 
-    // Call the smart contract function
-    console.log('Calling createGameWithLevelsAndCost...');
-    const transaction = await contract.createGameWithLevelsAndCost(
+    // Call the smart contract function (updated function name)
+    console.log('Calling createGameWithLevels...');
+    const transaction = await contract.createGameWithLevels(
       gameName,
       levels,
       costInWei
